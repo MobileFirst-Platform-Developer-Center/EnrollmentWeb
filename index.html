@@ -1,0 +1,55 @@
+<!doctype html>
+    <!--
+    Copyright 2016 IBM Corp.
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+    -->
+    <head>
+        <meta charset="utf-8">
+        <title>EnrollmentWeb</title>
+        <link rel="stylesheet" type="text/css" href="index.css" />
+        <script type="text/javascript" src="node_modules/requirejs/require.js" data-main="index"></script>
+    </head>
+
+
+    <body>
+        <div id="header">
+            <div id="headerButton">
+                <input id="enrollButton" type="button" value="Enroll" style="display:none"/>
+                <input id="logoutButton" type="button" value="Logout" style="display:none"/>
+            </div>
+            
+            <div id="headerTitle">
+                <h1>Enrollment</h1>
+            </div>
+        </div>
+            <div id="wrapper" style="display:none">
+                <div id="appDiv">
+                    <div id="DataButtons" style="width: auto">
+                        <input id="getPublicData" class="getDataButtons" type="button" value="Get Public Data"/><input id="getBalance" class="getDataButtons" type="button" value="Get Balance" style="display:none"/><input id="getTransactions" class="getDataButtons" type="button" value="Get Transactions" style="display:none"/>
+                    </div>
+                    
+                    <p class="responseLabel"><b>Response:</b></p>
+                    <textarea id="responseTextarea" rows="4" cols="50" name="comment"></textarea>
+                </div>
+                
+                <div id="loginDiv" style="display:none">
+                    <input id="username" type="text" autocapitalize="off" autocorrect="off" placeholder="Enter Username"  /><br />
+                    <input id="password" type="password" placeholder="Enter Password"  /><br/>
+                    <br clear="all"/>
+                    <button id="loginButton">Login</button>
+                    <p class="label" id="statusMsg"></p>
+                </div>
+            </div>
+    </body>
+</html>
