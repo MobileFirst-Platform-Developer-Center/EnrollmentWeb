@@ -1,7 +1,7 @@
 {
-  "name": "resourcerequestweb",
+  "name": "enrollmentweb",
   "version": "1.0.0",
-  "description": "ResourceRequestWeb is a sample application demonstrating the use to the WLResourceRequest API in JavaScript.",
+  "description": "EnrollmenetWeb is a sample application demonstrating an enrollment process with multiple security checks",
   "dependencies": {
     "express": "latest",
     "ibm-mfp-web-sdk": "^8.0.2016051608",
