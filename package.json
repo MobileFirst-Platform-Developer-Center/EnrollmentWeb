@@ -4,7 +4,7 @@
   "description": "EnrollmenetWeb is a sample application demonstrating an enrollment process with multiple security checks",
   "dependencies": {
     "express": "latest",
-    "ibm-mfp-web-sdk": "^8.0.2016051608",
+    "ibm-mfp-web-sdk": "latest",
     "request": "latest",
     "requirejs": "latest"
   },

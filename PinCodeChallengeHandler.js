@@ -18,7 +18,7 @@ define(['mfp'], function(WL) {
     var securityCheckName = 'EnrollmentPinCode';
     
         function init() { 
-            var pinCodeChallengeHandler = WL.Client.createWLChallengeHandler(securityCheckName);
+            var pinCodeChallengeHandler = WL.Client.createSecurityCheckChallengeHandler(securityCheckName);
             pinCodeChallengeHandler.handleChallenge = function(challenge) {
                 var msg = "";
 
@@ -40,8 +40,8 @@ define(['mfp'], function(WL) {
                     pinCodeChallengeHandler.submitChallengeAnswer({
                         "pin": pinCode
                     });
-                } else { // calling submitFailure in case user pressed the cancel button
-                    pinCodeChallengeHandler.submitFailure();
+                } else { // calling cancel in case user pressed the cancel button
+                    pinCodeChallengeHandler.cancel();
                 }
 
 
