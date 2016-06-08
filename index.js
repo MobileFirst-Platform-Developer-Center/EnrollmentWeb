@@ -35,7 +35,7 @@ require(['ibmmfpfanalytics', 'mfp', 'userLoginChallengeHandler','pinCodeChalleng
 			document.getElementById("getBalance").addEventListener("click", getBalance);
 			document.getElementById("getTransactions").addEventListener("click", getTransactions);
 			document.getElementById("enrollButton").addEventListener("click", enroll);
-			document.getElementById("logoutButton").addEventListener("click", logout);
+			document.getElementById("unenrollButton").addEventListener("click", unenroll);
 			
 		    UL.init();
 			PC.init();
@@ -46,7 +46,7 @@ require(['ibmmfpfanalytics', 'mfp', 'userLoginChallengeHandler','pinCodeChalleng
 	
 	function getPublicData() {
 		var resourceRequest = new WLResourceRequest(
-			"/adapters/Enrollment/publicData",
+			"/adapters/ResourceAdapter/publicData",
 			WLResourceRequest.GET
 		);
 
@@ -62,7 +62,7 @@ require(['ibmmfpfanalytics', 'mfp', 'userLoginChallengeHandler','pinCodeChalleng
 
 	function getBalance() {
 		var resourceRequest = new WLResourceRequest(
-			"/adapters/Enrollment/balance",
+			"/adapters/ResourceAdapter/balance",
 			WLResourceRequest.GET
 		);
 
@@ -78,7 +78,7 @@ require(['ibmmfpfanalytics', 'mfp', 'userLoginChallengeHandler','pinCodeChalleng
 
 	function getTransactions() {
 		var resourceRequest = new WLResourceRequest(
-			"/adapters/Enrollment/transactions",
+			"/adapters/ResourceAdapter/transactions",
 			WLResourceRequest.GET
 		);
 
@@ -101,13 +101,14 @@ require(['ibmmfpfanalytics', 'mfp', 'userLoginChallengeHandler','pinCodeChalleng
 		resourceRequest.send().then(
 			function(response) {
 				document.getElementById("wrapper").style.display = 'block';
-				document.getElementById("logoutButton").style.display = 'none';
+				document.getElementById("unenrollButton").style.display = 'none';
 				document.getElementById("headerTitle").style.marginLeft = '79px';
 				
 				if (response.responseText == "true") {  
 					document.getElementById("getBalance").style.display = 'inline-block';
 					document.getElementById("getTransactions").style.display = 'inline-block';
-					document.getElementById("logoutButton").style.display = 'block';
+					document.getElementById("unenrollButton").style.display = 'block';
+					document.getElementById("helloUser").innerHTML = "Hello, " + localStorage.getItem("username");
 				} else {
 					document.getElementById("enrollButton").style.display = 'block';
 				}
@@ -136,6 +137,10 @@ require(['ibmmfpfanalytics', 'mfp', 'userLoginChallengeHandler','pinCodeChalleng
 						document.getElementById('responseTextarea').value = "";
 						document.getElementById("loginDiv").style.display = 'none';
 						document.getElementById("appDiv").style.display = 'block';
+						document.getElementById("enrollButton").style.display = 'block';
+	                    document.getElementById("helloUser").innerHTML = "Hello, Guest";
+	                    document.getElementById("getTransactions").style.display = 'none';
+	                    document.getElementById("getBalance").style.display = 'none';
 					},
 					function(response) {
 						WL.Logger.debug("Failed logging out from EnrollmentUserLogin: " + JSON.stringify(response));
@@ -148,13 +153,16 @@ require(['ibmmfpfanalytics', 'mfp', 'userLoginChallengeHandler','pinCodeChalleng
 					);
 					
 					resourceRequest.send().then(
-						function() {
+						function(response) {
+							localStorage.setItem("username", response.responseJSON.userName);
+
 							document.getElementById("loginDiv").style.display = 'none';
 							document.getElementById("appDiv").style.display = 'block';
 							document.getElementById("getBalance").style.display = 'inline-block';
 							document.getElementById("getTransactions").style.display = 'inline-block';
 							document.getElementById("enrollButton").style.display = 'none';
-							document.getElementById("logoutButton").style.display = 'block';
+							document.getElementById("unenrollButton").style.display = 'block';
+							document.getElementById("helloUser").innerHTML = "Hello, " + localStorage.getItem("username");
 						},
 						function(response) {
 							WL.Logger.debug("Error writing public data: " + JSON.stringify(response));
@@ -168,6 +176,24 @@ require(['ibmmfpfanalytics', 'mfp', 'userLoginChallengeHandler','pinCodeChalleng
 		);
 	}
 
+	function unenroll() {
+	    var resourceRequest = new WLResourceRequest(
+	        "/adapters/Enrollment/unenroll",
+	        WLResourceRequest.DELETE
+	    );
+	    
+	    resourceRequest.send().then(
+	        function() {
+	            WL.Logger.debug ("Successfully deleted the pin code.");
+	            logout();
+	        },
+	        function(response) {
+	            WL.Logger.debug("Failed deleting pin code: " + JSON.stringify(response));
+	        }
+	    );
+	}
+
+
 	function logout() {
 		WLAuthorizationManager.logout("EnrollmentUserLogin").then(
 			function () {
@@ -177,27 +203,15 @@ require(['ibmmfpfanalytics', 'mfp', 'userLoginChallengeHandler','pinCodeChalleng
 						WL.Logger.debug("Successfully logged-out from EnrollmentPinCode.");
 						WLAuthorizationManager.logout("IsEnrolled").then(
 							function() {
-								WL.Logger.debug ("Successfully logged-out from IsEnrolled.");
-								var resourceRequest = new WLResourceRequest(
-									"/adapters/Enrollment/deletePinCode",
-									WLResourceRequest.DELETE
-								);
-								
-								resourceRequest.send().then(
-									function() {
-										WL.Logger.debug ("Successfully deleted the pin code.");
-										document.getElementById('username').value = "";
-										document.getElementById('password').value = "";
-										document.getElementById('responseTextarea').value = "";
-										document.getElementById("getBalance").style.display = 'none';
-										document.getElementById("getTransactions").style.display = 'none';
-										document.getElementById("enrollButton").style.display = 'block';
-										document.getElementById("logoutButton").style.display = 'none';
-									},
-									function(response) {
-										WL.Logger.debug("Failed deleting pin code: " + JSON.stringify(response));
-									}
-								);
+								WL.Logger.debug ("Successfully logged-out from IsEnrolled.");		
+								document.getElementById('username').value = "";
+								document.getElementById('password').value = "";
+								document.getElementById('responseTextarea').value = "";
+								document.getElementById("getBalance").style.display = 'none';
+								document.getElementById("getTransactions").style.display = 'none';
+								document.getElementById("enrollButton").style.display = 'block';
+								document.getElementById("unenrollButton").style.display = 'none';
+								document.getElementById("helloUser").innerHTML = 'Hello, Guest';
 							},
 							function(response) {
 								WL.Logger.debug("isEnrolled logout failed: " + JSON.stringify(response));
