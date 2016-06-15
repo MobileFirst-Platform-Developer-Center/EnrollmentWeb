@@ -26,7 +26,8 @@ Follow the [Setting up the Web development environment](https://mobilefirstplatf
 3. In the MobileFirst Console → EnrollmentWeb → Security, map the following scopes:
  - `setPinCode` scope to `EnrollmentUserLogin` security check
  - `accessRestricted` scope to `IsEnrolled` security check
- - `transactionsPrivilege` scope to `EnrollmentPinCode` and `IsEnrolled` security checks
+ - `unenroll` scope to `IsEnrolled` security check
+ - `transactions` scope to `EnrollmentPinCode` and `IsEnrolled` security checks
 
 4. In a browser, load the URL [http://localhost:9081/sampleapp](http://localhost:9081/sampleapp).
 
