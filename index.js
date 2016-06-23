@@ -13,6 +13,7 @@
 * See the License for the specific language governing permissions and
 * limitations under the License.
 */
+var displayName;
 
 require.config({
 	'paths': {
@@ -23,7 +24,7 @@ require.config({
 	}
 });
 
-require(['ibmmfpfanalytics', 'mfp', 'userLoginChallengeHandler','pinCodeChallengeHandler'], function(wlanalytics, WL, UL, PC) {
+require(['ibmmfpfanalytics', 'mfp', 'userLoginChallengeHandler','pinCodeChallengeHandler', 'isEnrolledChallengeHandler'], function(wlanalytics, WL, UL, PC, IE) {
     var wlInitOptions = {
         mfpContextRoot : '/mfp', // "mfp" is the default context root in the MobileFirst Developer Kit
         applicationId : 'com.sample.enrollmentweb'
@@ -39,6 +40,7 @@ require(['ibmmfpfanalytics', 'mfp', 'userLoginChallengeHandler','pinCodeChalleng
 			
 		    UL.init();
 			PC.init();
+			IE.init();
 		    
 		    isEnrolled();
 		}
@@ -93,30 +95,23 @@ require(['ibmmfpfanalytics', 'mfp', 'userLoginChallengeHandler','pinCodeChalleng
 	}
 
 	function isEnrolled() {
-		var resourceRequest = new WLResourceRequest(
-			"/adapters/Enrollment/isEnrolled/",
-			WLResourceRequest.GET
-		);
-		
-		resourceRequest.send().then(
-			function(response) {
-				document.getElementById("wrapper").style.display = 'block';
-				document.getElementById("unenrollButton").style.display = 'none';
-				document.getElementById("headerTitle").style.marginLeft = '79px';
-				
-				if (response.responseText == "true") {  
-					document.getElementById("getBalance").style.display = 'inline-block';
-					document.getElementById("getTransactions").style.display = 'inline-block';
-					document.getElementById("unenrollButton").style.display = 'block';
-					document.getElementById("helloUser").innerHTML = "Hello, " + localStorage.getItem("username");
-				} else {
-					document.getElementById("enrollButton").style.display = 'block';
-				}
-			},
-			function(response) {
-				WL.Logger.debug("Error while checking for enrollment status: " + JSON.stringify(response));
-			}
-		);    
+		WLAuthorizationManager.obtainAccessToken("IsEnrolled").then(
+	        function() {
+	            document.getElementById("wrapper").style.display = 'block';
+	            document.getElementById("getBalance").style.display = 'inline-block';
+	            document.getElementById("getTransactions").style.display = 'inline-block';
+	            document.getElementById("unenrollButton").style.display = 'block';
+	            document.getElementById("helloUser").innerHTML = "Hello, " + displayName;
+	        },
+	        function(response) {
+	            document.getElementById("wrapper").style.display = 'block';
+	            document.getElementById("unenrollButton").style.display = 'none';
+	            document.getElementById("headerTitle").style.marginLeft = '79px';
+	            document.getElementById("enrollButton").style.display = 'block';
+	            WL.Logger.debug("Error while checking for enrollment status: " + JSON.stringify(response));
+	            
+	        }
+	    );  
 	}
 
 	function enroll() {
@@ -154,15 +149,13 @@ require(['ibmmfpfanalytics', 'mfp', 'userLoginChallengeHandler','pinCodeChalleng
 					
 					resourceRequest.send().then(
 						function(response) {
-							localStorage.setItem("username", response.responseJSON.userName);
-
 							document.getElementById("loginDiv").style.display = 'none';
 							document.getElementById("appDiv").style.display = 'block';
 							document.getElementById("getBalance").style.display = 'inline-block';
 							document.getElementById("getTransactions").style.display = 'inline-block';
 							document.getElementById("enrollButton").style.display = 'none';
 							document.getElementById("unenrollButton").style.display = 'block';
-							document.getElementById("helloUser").innerHTML = "Hello, " + localStorage.getItem("username");
+							document.getElementById("helloUser").innerHTML = "Hello, " + displayName;
 						},
 						function(response) {
 							WL.Logger.debug("Error writing public data: " + JSON.stringify(response));
