@@ -12,7 +12,7 @@ https://mobilefirstplatform.ibmcloud.com/tutorials/en/foundation/8.0/authenticat
 
  The Enrollment Security Check adapter can be found in https://github.com/MobileFirst-Platform-Developer-Center/SecurityCheckAdapters/tree/release80.
 
-2. From a command-line window, navigate to the project's root folder and run the command: `mfpdev app register web com.sample.enrollmentweb`.
+2. From a command-line window, navigate to the project's root folder and run the command: `mfpdev app register`.
 
 3. You can either set-up a [Web development environment](https://mobilefirstplatform.ibmcloud.com/tutorials/en/foundation/8.0/setting-up-your-development-environment/web-development-environment) that fits your needs, or use the provided Node.js-based reverse proxy.
 
